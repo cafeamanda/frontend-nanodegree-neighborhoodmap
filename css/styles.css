@@ -1,0 +1,80 @@
+main {
+    height: 100vh;
+    padding-left: 30px;
+}
+
+.map {
+    height: 100%;
+}
+
+.sidemenu {
+    height: 100vh;
+    position: fixed;
+    width: 300px;
+    background-color: black;
+    z-index: 1;
+    transition: transform 0.3s;
+    overflow-y: scroll;
+}
+
+.sidemenu_hide {
+    top: 0;
+    left: 0;
+    transform: translateX(-89%);
+}
+
+.sidemenu_show {
+    top: 0;
+    left: 0;
+    transform: translateX(0);
+}
+
+.menu-icon {
+    margin: 5px 5px;
+    text-align: right;
+    padding-right: 5px;
+    transition: 0.1s ease;
+}
+
+.menu-icon:hover {
+    color: #ddd;
+}
+
+.place {
+    padding: 5px 0;
+    transition: 0.1s ease;
+}
+
+.place:hover {
+    padding-left: 10px;
+    background: dodgerblue;
+}
+
+.place:hover .place-link {
+    color: #ddd;
+}
+
+.place-link {
+    text-decoration: none !important;
+    cursor: pointer;
+}
+
+.place-details * {
+    margin: 0;
+}
+
+.place-name {
+    font-weight: bold;
+}
+
+.place-address {
+    font-size: 10px;
+}
+
+.place-rating_icon {
+    color: gold !important;
+}
+
+.place-rating {
+    color: blue !important;
+}
