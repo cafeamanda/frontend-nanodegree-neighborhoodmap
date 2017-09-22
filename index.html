@@ -14,21 +14,29 @@
 <body>
 
     <aside class="sidemenu sidemenu_show">
-        <div class="text-right">
+        <div class="sticky">
             <i class="fa fa-bars fa-2x menu-icon"></i>
         </div>
 
         <main class="container-fluid">
-            <section class="">
-            </section>
-            <form class="form-inline">
-                <div class="form-group">
-                    <div class="input-group">
-                        <input type="text" class="form-control" id="searchBox" placeholder="Search...">
-                        <span class="input-group-btn"><button id="searchBtn" type="submit" class="btn btn-primary">Filter <i class="fa fa-filter"></i></button></span>
+            <section class="forms">
+                <form id="locationForm" class="form-inline">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="zoom" id="chooseNeighborhood" placeholder="Choose a neighborhood...">
+                            <span class="input-group-btn"><button id="submitBtn" type="submit" class="btn btn-primary"><i class="fa fa-search"></i></button></span>
+                        </div>
                     </div>
-                </div>
-            </form>
+                </form>
+                <form id="filterForm" class="form-inline">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="zoom" id="filterInput" placeholder="Filter...">
+                            <span class="input-group-btn"><button type="button" class="btn btn-primary"><i class="fa fa-filter"></i></button></span>
+                        </div>
+                    </div>
+                </form>
+            </section>
             <section class="place-listing">
                 <ul class="places-list list-unstyled">
                 </ul>
@@ -43,9 +51,10 @@
     <!-- scripts-->
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
     <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="bower_components/knockout/dist/knockout.js"></script>
     <script src="js/map.js"></script>
     <script src="js/sidemenu.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBdRweySfgC8OtGCXqmlkBVWl_RdYhXPyQ&libraries=places&callback=initMap" async defer></script>
+    <script src="bower_components/knockout/dist/knockout.js"></script>
+    <script src="js/app.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBdRweySfgC8OtGCXqmlkBVWl_RdYhXPyQ&libraries=places,geometry&callback=initialize" async defer></script>
 </body>
 </html>

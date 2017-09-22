@@ -1,6 +1,7 @@
     var $sidemenu = $('.sidemenu');
     var $menuIcon = $('.menu-icon');
-    var $map = $('.map');
+    // var $map = $('.map');
+    // var $placeItem = $('.place-item');
 
     // Hide and show sidemenu on 'click'
     $menuIcon.click(function() {
@@ -11,6 +12,6 @@
         }
     });
 
-    $map.click(function() {
+    $('.map, .places-list').click(function() {
         $sidemenu.removeClass('sidemenu_show').addClass('sidemenu_hide');
     });
