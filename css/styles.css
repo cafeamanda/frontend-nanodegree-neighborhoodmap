@@ -10,6 +10,7 @@ main {
 .sidemenu {
     height: 100vh;
     position: fixed;
+    padding-top: 5px;
     width: 300px;
     background-color: black;
     z-index: 1;
@@ -17,10 +18,14 @@ main {
     overflow-y: scroll;
 }
 
+form {
+    margin: 5px 0;
+}
+
 .sidemenu_hide {
     top: 0;
     left: 0;
-    transform: translateX(-89%);
+    transform: translateX(-79%);
 }
 
 .sidemenu_show {
@@ -29,38 +34,41 @@ main {
     transform: translateX(0);
 }
 
-.menu-icon {
-    margin: 5px 5px;
+.sticky {
+    position: sticky;
+    top: 5px;
     text-align: right;
-    padding-right: 5px;
-    transition: 0.1s ease;
+}
+
+.menu-icon {
+    color: #aaa;
+    /*position: sticky;*/
+    top: 0;
+    right: 0;
+    margin: 5px 5px;
+    padding: 5px 8px;
 }
 
 .menu-icon:hover {
-    color: #ddd;
+    border-radius: 50%;
+    background: #eee;
+    /*box-shadow: inset 2px 0px 1px 1px rgb(191, 191, 191);*/
 }
 
-.place {
+.place-item {
     padding: 5px 0;
     transition: 0.1s ease;
+    color: #337ab7;
 }
 
-.place:hover {
+.place-item:hover {
     padding-left: 10px;
     background: dodgerblue;
-}
-
-.place:hover .place-link {
     color: #ddd;
-}
-
-.place-link {
-    text-decoration: none !important;
-    cursor: pointer;
 }
 
 .place-details * {
-    margin: 0;
+    margin: 1.5px 0;
 }
 
 .place-name {
@@ -69,6 +77,7 @@ main {
 
 .place-address {
     font-size: 10px;
+    max-width: 200px;
 }
 
 .place-rating_icon {
@@ -77,4 +86,25 @@ main {
 
 .place-rating {
     color: blue !important;
+}
+
+.place-img_caption {
+    font-size: 10px;
+}
+
+.place-img_caption a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.place-img_caption:hover {
+    color: #337ab7;
+    font-weight: bold;
+}
+
+.place_data-feedback {
+    font-style: italic;
+    font-size: 12px;
+    text-align: center;
+    margin: 36px 0;
 }
