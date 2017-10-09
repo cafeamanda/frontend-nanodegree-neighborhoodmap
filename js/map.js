@@ -1,20 +1,11 @@
 /**
- * Clears a DOM element from its contents
- * @method setPristine
- * @param {jQuery} $DOMElem
- */
-function setPristine($DOMelem) {
-    $DOMelem.empty();
-}
-
-/**
  * Initializes map in a default location. Recalculates
  * map on a new location
  * @method initialize
  * @param {object} center
  *
  */
-function initialize() {
+function init() {
 
     // Defines a default center for the map
     var center = new google.maps.LatLng('-22.9492586', '-43.1545757');
@@ -44,7 +35,7 @@ function initialize() {
         }, function (result, status) {
             if (status === "OK") {
                 center = result[0].geometry.location;
-                setPristine($('.places-list'));
+                $('.places-list').empty();
                 initMap(map, center);
             } else {
                 alert("Error: " + status +
@@ -107,16 +98,16 @@ function initMap(map, center) {
         var marker = createMarker(place);
         marker.setMap(map);
         markers.push(marker);
-        $('.places-list')
-            .append("<li id='" + marker.id + "' class='place-item' role='button'>" + marker.title + "</li>");
-        $('.place-item')
-            .click(function (e) {
-                if (e.target.getAttribute("id") == marker.id) {
-                    new google.maps.event.trigger(markers[marker.id], 'click');
-                } else {
-                    return;
-                }
-            });
+        // $('.places-list')
+        //     .append("<li id='" + marker.id + "' class='place-item' role='button'>" + marker.title + "</li>");
+        // $('.place-item')
+        //     .click(function (e) {
+        //         if (e.target.getAttribute("id") == marker.id) {
+        //             new google.maps.event.trigger(markers[marker.id], 'click');
+        //         } else {
+        //             return;
+        //         }
+        //     });
 
     }
 
