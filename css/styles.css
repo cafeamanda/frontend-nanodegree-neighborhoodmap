@@ -1,6 +1,5 @@
 main {
     height: 100vh;
-    padding-left: 30px;
 }
 
 .map {
@@ -25,7 +24,7 @@ form {
 .sidemenu_hide {
     top: 0;
     left: 0;
-    transform: translateX(-79%);
+    transform: translateX(-100%);
 }
 
 .sidemenu_show {
@@ -34,15 +33,16 @@ form {
     transform: translateX(0);
 }
 
-.sticky {
+.menu-icon-container {
     position: sticky;
-    top: 5px;
+    top: 0;
+    z-index: 1;
     text-align: right;
+    background: black;
 }
 
 .menu-icon {
     color: #aaa;
-    /*position: sticky;*/
     top: 0;
     right: 0;
     margin: 5px 5px;
@@ -52,6 +52,7 @@ form {
 .menu-icon:hover {
     border-radius: 50%;
     background: #eee;
+    cursor: pointer;
     /*box-shadow: inset 2px 0px 1px 1px rgb(191, 191, 191);*/
 }
 
@@ -107,4 +108,12 @@ form {
     font-size: 12px;
     text-align: center;
     margin: 36px 0;
+}
+
+.wiki-articles {
+    padding: 5px;
+}
+
+.wiki-articles__list {
+    padding-left: 0;
 }
