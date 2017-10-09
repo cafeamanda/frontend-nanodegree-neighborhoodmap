@@ -23,13 +23,13 @@ form {
 
 .sidemenu_hide {
     top: 0;
-    left: 0;
-    transform: translateX(-100%);
+    right: 0;
+    transform: translateX(100%);
 }
 
 .sidemenu_show {
     top: 0;
-    left: 0;
+    right: 0;
     transform: translateX(0);
 }
 

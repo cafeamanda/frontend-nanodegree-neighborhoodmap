@@ -6,10 +6,10 @@ function initialize() {
     // Creates a new map object
     var map = new google.maps.Map(document.getElementsByClassName('map')[0], {
         center: center,
-        zoom: 14
+        zoom: 13
     });
 
-    // Load services
+    // Load places service
     var placesService = new google.maps.places.PlacesService(map);
 
     /**
@@ -36,6 +36,7 @@ function initialize() {
      * @param {object} place
      * @return {object} marker
      */
+    var markers = [];
     function CreateMarker(place) {
         var marker = new google.maps.Marker({
             map: map,
@@ -59,9 +60,21 @@ function initialize() {
             marker.setAnimation(null);
         });
 
+        markers.push(marker);
+
         marker.setMap(map)
 
         return marker;
+    }
+
+    /**
+     * Removes all existing markers
+     * @method removeAllMarkers
+     */
+    function removeAllMarkers() {
+        for (var i = 0; i < markers.length; i++) {
+            markers[i].setMap(null);
+        }
     }
 
     /**
@@ -120,7 +133,6 @@ function initialize() {
 
                 // MediaWiki API
                 var wikiLink = [];
-                // var wikiSearchParam = place.name.toString().replace(/ /g, "_");
                 var wikiUrl = "https://en.wikipedia.org/w/api.php?action=opensearch&search='" + place.name + "'&format=json&callback=wikiCallBack";
                 $.ajax({
                     url: wikiUrl,
@@ -175,40 +187,75 @@ function initialize() {
 
         var self = this;
 
-        this.places = ko.observableArray();
+        self.places = ko.observableArray();
 
-        this.markers = ko.observableArray();
+        self.markers = ko.observableArray();
 
-        placesService.textSearch(
-            {
-                location: center,
-                radius: 2500,
-                type: "point_of_interest"
-            },
-            function (results, status) {
-                if (status == google.maps.places.PlacesServiceStatus.OK) {
-                    console.log(results);
-                    for (var i = 0; i < results.length; i++) {
-                        self.places.push(results[i]);
-                        self.markers.push(new CreateMarker(results[i]));
+        self.filterValue = ko.observable("");
+
+        self.initialSearch = function() {
+            placesService.textSearch(
+                {
+                    location: center,
+                    radius: 2500,
+                    type: "point_of_interest"
+                },
+                function (results, status) {
+                    if (status == google.maps.places.PlacesServiceStatus.OK) {
+                        self.places.removeAll();
+                        self.markers.removeAll();
+                        removeAllMarkers();
+                        for (var i = 0; i < results.length; i++) {
+                            self.places.push(results[i]);
+                            self.markers.push(new CreateMarker(results[i]));
+                        }
+                    } else {
+                        console.error(status);
                     }
-                } else {
-                    console.error(status);
                 }
-            }
-        );
+            );
+        }
 
-        this.openInfoWindow = function(index) {
+        self.openInfoWindow = function(index) {
             // trigger map click to close any open infowindows
             new google.maps.event.trigger(map, 'click');
             // open correspodent infowindow
             new google.maps.event.trigger(self.markers()[index], 'click');
         };
+
+        self.worker = ko.computed(function () {
+            if (self.filterValue()) self.searchFilter();
+            else if (!self.filterValue()) self.initialSearch();
+        }, this);
+
+        self.searchFilter = function() {
+            placesService.textSearch(
+                {
+                    location: center,
+                    radius: 2500,
+                    type: "point_of_interest"
+                },
+                function (results, status) {
+                    if (status == google.maps.places.PlacesServiceStatus.OK) {
+                        self.places.removeAll();
+                        self.markers.removeAll();
+                        removeAllMarkers();
+                        for (var i = 0; i < results.length; i++) {
+                            if (results[i].name.includes(self.filterValue())) {
+                                self.places.push(results[i]);
+                                self.markers.push(new CreateMarker(results[i]));
+                            }
+                        }
+                    } else {
+                        console.error(status);
+                    }
+                }
+            );
+        }
     }
 
     // Activates knockout.js
     ko.applyBindings(new ViewModel());
-
 }
 
 
