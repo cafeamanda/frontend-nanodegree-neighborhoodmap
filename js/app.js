@@ -12,6 +12,50 @@ function initialize() {
     // Load places service
     var placesService = new google.maps.places.PlacesService(map);
 
+    // This is the declaration of the model, to be populated
+    var googleData = [];
+
+    /**
+     * This method gets places by textSearch, using the
+     * Places Services
+     * @method getPlacesByTextSearch
+     * @return {object} Promise
+     */
+    function getPlacesByTextSearch() {
+        return new Promise(function (resolve, reject) {
+            placesService.textSearch({
+                location: center,
+                radius: 2500,
+                type: "point_of_interest"
+            }, function (result, status) {
+                if (status !== google.maps.places.PlacesServiceStatus.OK) {
+                    reject(result);
+                } else {
+                    resolve(result);
+                }
+            });
+        });
+    };
+
+    /**
+     * This block of code receives and deals with the Promise
+     * returned by getPlacesByTextSearch(). Once the model is
+     * done getting populated, the knockout.js bindings
+     * are activated to reflect the search on the map and
+     * the list view.
+     */
+    getPlacesByTextSearch()
+        .then(function(results) {
+            for (var i = 0; i < results.length; i++) {
+                googleData.push(results[i]);
+            }
+            // Activates knockout.js
+            ko.applyBindings(new ViewModel());
+        })
+        .catch(function(error) {
+            console.log(error);
+    });
+
     /**
      * Gets details of a place on the app
      * @method getPlaceDetails
@@ -31,12 +75,12 @@ function initialize() {
     };
 
     /**
-     * Creates a marker
+     * Creates a marker on the map, with animation on click
      * @method createMarker
      * @param {object} place
      * @return {object} marker
      */
-    var markers = [];
+    var markers = []; // Markers array to keep track of all the markers on the map
     function CreateMarker(place) {
         var marker = new google.maps.Marker({
             map: map,
@@ -47,12 +91,11 @@ function initialize() {
         var infowindow = createInfoWindow(marker);
 
         marker.addListener('click', function () {
-            new google.maps.event.trigger(map, 'click'); // closes open infowindows
-
-            this.setAnimation(google.maps.Animation.BOUNCE);
-            populateInfoWindow(place, marker, infowindow);
-            infowindow.open(map, marker);
-            map.setCenter(marker.position);
+            new google.maps.event.trigger(map, 'click'); // closes any open infowindows
+            this.setAnimation(google.maps.Animation.BOUNCE); // sets animation to 'Bounce'
+            populateInfoWindow(place, marker, infowindow); // populates infowindow
+            infowindow.open(map, marker); // opens correspondent infowindow
+            map.setCenter(marker.position); // recenters map on selected marker
         });
 
         // Stops animation on map.click
@@ -182,7 +225,8 @@ function initialize() {
     }
 
 
-
+    // This is the Knockout ViewModel,
+    // with its instances and methods
     function ViewModel() {
 
         var self = this;
@@ -193,88 +237,39 @@ function initialize() {
 
         self.filterValue = ko.observable("");
 
-        self.initialSearch = function() {
-            placesService.textSearch(
-                {
-                    location: center,
-                    radius: 2500,
-                    type: "point_of_interest"
-                },
-                function (results, status) {
-                    if (status == google.maps.places.PlacesServiceStatus.OK) {
-                        self.places.removeAll();
-                        self.markers.removeAll();
-                        removeAllMarkers();
-                        for (var i = 0; i < results.length; i++) {
-                            self.places.push(results[i]);
-                            self.markers.push(new CreateMarker(results[i]));
-                        }
-                    } else {
-                        console.error(status);
-                    }
-                }
-            );
-        }
-
         self.openInfoWindow = function(index) {
             // trigger map click to close any open infowindows
             new google.maps.event.trigger(map, 'click');
-            // open correspodent infowindow
+            // open correspondent infowindow
             new google.maps.event.trigger(self.markers()[index], 'click');
         };
+
+        self.initialSearch = function() {
+            self.places.removeAll();
+            self.markers.removeAll();
+            removeAllMarkers();
+            for (var i = 0; i < googleData.length; i++) {
+                    self.places.push(googleData[i]);
+                    self.markers.push(new CreateMarker(googleData[i]));
+            }
+        }
+
+        self.searchFilter = function() {
+            self.places.removeAll();
+            self.markers.removeAll();
+            removeAllMarkers();
+            for (var i = 0; i < googleData.length; i++) {
+                if (googleData[i].name.includes(self.filterValue())) {
+                    self.places.push(googleData[i]);
+                    self.markers.push(new CreateMarker(googleData[i]));
+                }
+            }
+        }
 
         self.worker = ko.computed(function () {
             if (self.filterValue()) self.searchFilter();
             else if (!self.filterValue()) self.initialSearch();
         }, this);
 
-        self.searchFilter = function() {
-            placesService.textSearch(
-                {
-                    location: center,
-                    radius: 2500,
-                    type: "point_of_interest"
-                },
-                function (results, status) {
-                    if (status == google.maps.places.PlacesServiceStatus.OK) {
-                        self.places.removeAll();
-                        self.markers.removeAll();
-                        removeAllMarkers();
-                        for (var i = 0; i < results.length; i++) {
-                            if (results[i].name.includes(self.filterValue())) {
-                                self.places.push(results[i]);
-                                self.markers.push(new CreateMarker(results[i]));
-                            }
-                        }
-                    } else {
-                        console.error(status);
-                    }
-                }
-            );
-        }
     }
-
-    // Activates knockout.js
-    ko.applyBindings(new ViewModel());
 }
-
-
-
-/*
-    data-bind="click: initMap" botao
-
-    usar data-bind
-
-
-    UDACITY ADVICE::
-
-    list view looks in the model
-    search looks in the model to see what to turn on and off
-    map looks in the model to see where to put the markers
-
-    the model decides what gets populated into everything
-
-    when search for something the markers should reflect the result of that search as well as the list view
-
-    list and markers are set by the search function
-*/
