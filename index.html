@@ -21,29 +21,27 @@
 
         <main class="container-fluid">
 
+            <div class="menu-icon-container" style="float:right">
+                <i class="fa fa-bars fa-2x menu-icon"></i>
+            </div>
+
             <section class="forms">
-                <!-- <form id="locationForm" class="form-inline">
-                    <div class="form-group">
-                        <div class="input-group">
-                            <input type="text" class="form-control" name="zoom" id="chooseNeighborhood" placeholder="Choose a neighborhood...">
-                            <span class="input-group-btn"><button id="submitBtn" type="submit" class="btn btn-primary"><i class="fa fa-search"></i></button></span>
-                        </div>
-                    </div>
-                </form> -->
                 <form id="filterForm" class="form-inline">
                     <div class="form-group">
                         <div class="input-group">
-                            <input type="text" class="form-control" name="zoom" id="filterInput" placeholder="Filter...">
+                            <input type="text" class="form-control" name="zoom" id="filterInput" placeholder="Filter..." data-bind="value: filterValue, valueUpdate: 'afterkeydown'">
                             <span class="input-group-btn"><button type="button" class="btn btn-primary"><i class="fa fa-filter"></i></button></span>
                         </div>
                     </div>
                 </form>
             </section>
+
             <section class="place-listing">
                 <ul class="places-list list-unstyled" data-bind="foreach: places">
                     <li class="place-item" role="button" data-bind="text: name, click: $parent.openInfoWindow.bind($data, $index())"></li>
                 </ul>
             </section>
+
         </main>
     </aside>
 
