@@ -1,5 +1,5 @@
 main {
-    height: 100vh;
+    height: calc(100vh - 48px); /* viewport height minus upper black bar */
 }
 
 .map {
@@ -23,22 +23,27 @@ form {
 
 .sidemenu_hide {
     top: 0;
-    right: 0;
-    transform: translateX(100%);
+    left: 0;
+    transform: translateX(-100%);
 }
 
 .sidemenu_show {
     top: 0;
-    right: 0;
+    left: 0;
     transform: translateX(0);
 }
 
-.menu-icon-container {
+.menu-icon-container,
+.inner-menu-icon-container {
     position: sticky;
     top: 0;
     z-index: 1;
-    text-align: right;
+    text-align: left;
     background: black;
+}
+
+.inner-menu-icon-container {
+    float: right;
 }
 
 .menu-icon {

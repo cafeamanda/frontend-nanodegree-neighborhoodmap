@@ -35,7 +35,7 @@ function initialize() {
                 }
             });
         });
-    };
+    }
 
     /**
      * This block of code receives and deals with the Promise
@@ -45,16 +45,16 @@ function initialize() {
      * the list view.
      */
     getPlacesByTextSearch()
-        .then(function(results) {
+        .then(function (results) {
             for (var i = 0; i < results.length; i++) {
                 googleData.push(results[i]);
             }
             // Activates knockout.js
             ko.applyBindings(new ViewModel());
         })
-        .catch(function(error) {
-            console.log(error);
-    });
+        .catch(function (error) {
+            alert("An error occured: " + error);
+        });
 
     /**
      * Gets details of a place on the app
@@ -72,7 +72,7 @@ function initialize() {
                 }
             });
         });
-    };
+    }
 
     /**
      * Creates a marker on the map, with animation on click
@@ -91,7 +91,7 @@ function initialize() {
         var infowindow = createInfoWindow(marker);
 
         marker.addListener('click', function () {
-            new google.maps.event.trigger(map, 'click'); // closes any open infowindows
+            google.maps.event.trigger(map, 'click'); // closes any open infowindows
             this.setAnimation(google.maps.Animation.BOUNCE); // sets animation to 'Bounce'
             populateInfoWindow(place, marker, infowindow); // populates infowindow
             infowindow.open(map, marker); // opens correspondent infowindow
@@ -105,7 +105,7 @@ function initialize() {
 
         markers.push(marker);
 
-        marker.setMap(map)
+        marker.setMap(map);
 
         return marker;
     }
@@ -170,18 +170,22 @@ function initialize() {
             photoHTML = '<p class="place_data-feedback">No photos available.</p>';
         }
 
-        // Awaits for a Promise and populates infowindow on arrival
+        /**
+         * This block of code receives and deals with the Promise
+         * returned by getPlaceDetails(). Once the response arrives,
+         * it makes an ajax request to get data from the MediaWiki API
+         * and populates an infowindow with the information from both
+         * requests.
+         */
         getPlaceDetails(place)
             .then(function (details) {
 
-                // MediaWiki API
-                var wikiLink = [];
+                // MediaWiki API request
                 var wikiUrl = "https://en.wikipedia.org/w/api.php?action=opensearch&search='" + place.name + "'&format=json&callback=wikiCallBack";
                 $.ajax({
                     url: wikiUrl,
                     dataType: "jsonp",
-                    // jsonp: "callback",
-                    success: function(response) {
+                    success: function (response) {
                         var wikiHTML = "";
 
                         if (response[1].length > 0) {
@@ -189,38 +193,38 @@ function initialize() {
                             var wikiUrls = response[3];
 
                             for (var i = 0; i < wikiList.length; i++) {
-                                wikiHTML += "<li><a href='"+ wikiUrls[i] + "' target='_blank'>&bull; " + wikiList[i] + "</a></li>";
+                                wikiHTML += "<li><a href='" + wikiUrls[i] + "' target='_blank'>&bull; " + wikiList[i] + "</a></li>";
                             }
                         } else {
-                            wikiHTML = "<p>No articles found</p>"
+                            wikiHTML = "<p>No articles found</p>";
                         }
 
-                        setInfowindowContent(wikiHTML);
+                        // Sets a content for the infowindow
+                        infowindow.setContent(
+                            '<div class="place-details">' +
+                            '<p class="place-name">' + place.name + '</p>' +
+                            '<a href="' + details.url + '" target="_blank">' +
+                            '<p class="place-address">' + place.formatted_address + '</p>' +
+                            '</a>' +
+                            photoHTML +
+                            '<section class="wiki-articles">' +
+                            '<h5>Related articles</h5>' +
+                            '<ul class="wiki-articles__list">' +
+                            wikiHTML +
+                            '</ul>' +
+                            '<p><small><small>Powered by Wikipedia</small></small></p>' +
+                            '</section>' +
+                            // '<p class="place-rating"><i class="fa fa-star place-rating_icon"></i> ' + place.rating + '</p>'
+                            '</div>'
+                        );
+                    },
+                    error: function (err) {
+                        alert("An error occured: " + err);
                     }
                 });
-
-                function setInfowindowContent(wikiHTML) {
-                    infowindow.setContent(
-                        '<div class="place-details">'
-                            + '<p class="place-name">' + place.name + '</p>'
-                            + '<a href="' + details.url + '" target="_blank">'
-                                + '<p class="place-address">' + place.formatted_address + '</p>'
-                            + '</a>'
-                            + photoHTML
-                            + '<section class="wiki-articles">'
-                                + '<h5>Related articles</h5>'
-                                + '<ul class="wiki-articles__list">'
-                                    + wikiHTML
-                                + '</ul>'
-                                + '<p><small><small>Powered by Wikipedia</small></small></p>'
-                            + '</section>'
-                            // + '<p class="place-rating"><i class="fa fa-star place-rating_icon"></i> ' + place.rating + '</p>'
-                        + '</div>'
-                    );
-                }
             })
             .catch(function (error) {
-                console.log(error)
+                alert("An error occured: " + error);
             });
     }
 
@@ -237,34 +241,34 @@ function initialize() {
 
         self.filterValue = ko.observable("");
 
-        self.openInfoWindow = function(index) {
+        self.openInfoWindow = function (index) {
             // trigger map click to close any open infowindows
-            new google.maps.event.trigger(map, 'click');
+            google.maps.event.trigger(map, 'click');
             // open correspondent infowindow
-            new google.maps.event.trigger(self.markers()[index], 'click');
+            google.maps.event.trigger(self.markers()[index], 'click');
         };
 
-        self.initialSearch = function() {
+        self.initialSearch = function () {
             self.places.removeAll();
             self.markers.removeAll();
             removeAllMarkers();
             for (var i = 0; i < googleData.length; i++) {
-                    self.places.push(googleData[i]);
-                    self.markers.push(new CreateMarker(googleData[i]));
+                self.places.push(googleData[i]);
+                self.markers.push(new CreateMarker(googleData[i]));
             }
-        }
+        };
 
-        self.searchFilter = function() {
+        self.searchFilter = function () {
             self.places.removeAll();
             self.markers.removeAll();
             removeAllMarkers();
             for (var i = 0; i < googleData.length; i++) {
-                if (googleData[i].name.includes(self.filterValue())) {
+                if (googleData[i].name.toLowerCase().includes(self.filterValue().toLowerCase())) {
                     self.places.push(googleData[i]);
                     self.markers.push(new CreateMarker(googleData[i]));
                 }
             }
-        }
+        };
 
         self.worker = ko.computed(function () {
             if (self.filterValue()) self.searchFilter();
