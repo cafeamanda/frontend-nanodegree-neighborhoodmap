@@ -1,7 +1,7 @@
 function initialize() {
 
     // Defines a default center for the map
-    var center = new google.maps.LatLng('40.782865', '-73.965355');
+    var center = new google.maps.LatLng('40.758895', '-73.985131');
 
     // Creates a new map object
     var map = new google.maps.Map(document.getElementsByClassName('map')[0], {
@@ -9,7 +9,7 @@ function initialize() {
         zoom: 13
     });
 
-    // Load places service
+    // Loads places service
     var placesService = new google.maps.places.PlacesService(map);
 
     // This is the declaration of the model, to be populated
@@ -26,7 +26,7 @@ function initialize() {
             placesService.textSearch({
                 location: center,
                 radius: 2500,
-                type: "point_of_interest"
+                types: ["restaurant", "museum"]
             }, function (result, status) {
                 if (status !== google.maps.places.PlacesServiceStatus.OK) {
                     reject(result);
@@ -276,4 +276,8 @@ function initialize() {
         }, this);
 
     }
+}
+
+function mapError() {
+    alert("Google Maps API was unable to load. Please try again later.");
 }
