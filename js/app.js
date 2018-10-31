@@ -26,7 +26,7 @@ function initialize() {
             placesService.textSearch({
                 location: center,
                 radius: 2500,
-                types: ["restaurant", "museum"]
+                types: ["museum"]
             }, function (result, status) {
                 if (status !== google.maps.places.PlacesServiceStatus.OK) {
                     reject(result);
